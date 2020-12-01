@@ -1,15 +1,9 @@
 use anyhow::Result;
 use itertools::Itertools;
-use std::io::{self, BufRead};
 
 #[allow(dead_code)]
 fn part1() -> Result<()> {
-    let stdin = io::stdin();
-    let data = stdin
-        .lock()
-        .lines()
-        .map(|line| -> Result<u32> { line?.parse().map_err(Into::into) })
-        .collect::<Result<Vec<_>, _>>()?;
+    let data: Vec<u32> = common::std_input_vec()?;
 
     // Buggy - single `1010` would be accepted, even if it shouldnt, but I checked out manually no
     // such thing in input file
@@ -28,12 +22,7 @@ fn part1() -> Result<()> {
 
 #[allow(dead_code)]
 fn part2() -> Result<()> {
-    let stdin = io::stdin();
-    let data = stdin
-        .lock()
-        .lines()
-        .map(|line| -> Result<u32> { line?.parse().map_err(Into::into) })
-        .collect::<Result<Vec<_>, _>>()?;
+    let data: Vec<u32> = common::std_input_vec()?;
 
     // Buggy - single `1010` would be accepted, even if it shouldnt, but I checked out manually no
     // such thing in input file
