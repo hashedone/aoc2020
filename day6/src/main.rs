@@ -19,8 +19,8 @@ fn part2(input: &[String]) -> usize {
     input
         .split(|line| line.is_empty())
         .map(|group| {
-            let len = group.clone().len();
-            let mut group: Box<[char]> = group.concat().chars().collect();
+            let len = group.len();
+            let mut group: Box<[char]> = group.iter().flat_map(|line| line.chars()).collect();
             group.sort();
             group
                 .into_iter()
