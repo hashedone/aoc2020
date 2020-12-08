@@ -9,3 +9,7 @@ edition = "2018"
 [dependencies]
 common = { path = "../common" }
 anyhow = "1"
+
+[features]
+default = []
+dbg-print = []

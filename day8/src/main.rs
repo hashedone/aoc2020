@@ -50,19 +50,20 @@ impl Machine {
         }
     }
 
-    fn step(&mut self) -> bool {
-        let op = if let Some(op) = self.program.get(self.pc) {
-            op
-        } else {
-            return false;
-        };
+    fn step(&mut self) -> Result<bool> {
+        let op = self
+            .program
+            .get(self.pc)
+            .ok_or_else(|| anyhow!("Invalid pc: {}!", self.pc))?;
 
         match op {
             Op::Nop(_) => {
+                #[cfg(feature = "dbg-print")]
                 println!("[{}] Nop", self.pc);
                 self.pc += 1;
             }
             Op::Acc(arg) => {
+                #[cfg(feature = "dbg-print")]
                 println!(
                     "[{}] Acc {}, acc = {} + {1} = {}",
                     self.pc,
@@ -74,6 +75,7 @@ impl Machine {
                 self.pc += 1;
             }
             Op::Jmp(offset) => {
+                #[cfg(feature = "dbg-print")]
                 println!(
                     "[{}] Jmp {}, pc = {0} + {1} = {}",
                     self.pc,
@@ -84,7 +86,7 @@ impl Machine {
             }
         }
 
-        self.pc < self.program.len()
+        Ok(self.pc < self.program.len())
     }
 
     fn reset(&mut self) {
@@ -93,16 +95,16 @@ impl Machine {
     }
 }
 
-fn part1(program: Vec<Op>) -> i32 {
+fn part1(program: Vec<Op>) -> Result<i32> {
     let mut machine = Machine::new(program);
     let mut visited = vec![false; machine.program.len()];
 
     while !visited[machine.pc] {
         visited[machine.pc] = true;
-        machine.step();
+        machine.step()?;
     }
 
-    machine.accumulator
+    Ok(machine.accumulator)
 }
 
 fn part2(program: Vec<Op>) -> Result<i32> {
@@ -127,7 +129,7 @@ fn part2(program: Vec<Op>) -> Result<i32> {
 
         while !visited[machine.pc] {
             visited[machine.pc] = true;
-            if !machine.step() {
+            if !machine.step()? {
                 return Ok(machine.accumulator);
             }
         }
@@ -144,7 +146,7 @@ fn part2(program: Vec<Op>) -> Result<i32> {
 
 fn main() -> Result<()> {
     let program: Vec<Op> = common::std_input_vec()?;
-    println!("Part1: {}", part1(program.clone()));
+    println!("Part1: {}", part1(program.clone())?);
     println!("Part2: {}", part2(program)?);
 
     Ok(())
