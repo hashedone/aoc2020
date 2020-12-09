@@ -18,19 +18,18 @@ fn part1(input: &[u64]) -> u64 {
 fn part2(input: &[u64]) -> u64 {
     let target = part1(input);
 
-    let mut low_idx = 0;
-    let mut high_idx = 0;
-    let mut sum = 0;
-
-    while sum != target {
-        if sum < target {
-            sum += input[high_idx];
-            high_idx += 1;
-        } else {
-            sum -= input[low_idx];
-            low_idx += 1;
-        }
-    }
+    let (low_idx, high_idx, _) =
+        std::iter::successors(Some((0, 0, 0)), |(low_idx, high_idx, sum)| {
+            if *sum < target {
+                Some((*low_idx, high_idx + 1, sum + input[*high_idx]))
+            } else if *sum > target {
+                Some((low_idx + 1, *high_idx, sum - input[*low_idx]))
+            } else {
+                None
+            }
+        })
+        .last()
+        .unwrap();
 
     let s = &input[low_idx..high_idx];
     s.iter().min().unwrap() + s.iter().max().unwrap()
